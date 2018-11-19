@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.modelmapper.ModelMapper;
+import org.spring.learning.core.ioc.chapter1.Author;
 import org.spring.learning.core.ioc.chapter1.Book;
 import org.spring.learning.core.ioc.chapter1.BookDTO;
 
@@ -76,19 +77,39 @@ public class DataTests {
         BookDTO bookDTO = testBook.toBookDTO();
         Assert.assertEquals(bookDTO.getId(), testBook.getId());
         Assert.assertEquals(bookDTO.getName(), testBook.getName());
-        Assert.assertEquals(bookDTO.getPrice(), testBook.getPrice().floatValue(), 0.002);
+
+        if(testBook.getPrice() != null)
+            Assert.assertEquals(bookDTO.getPrice(), testBook.getPrice().floatValue(), 0.002);
     }
 
     @Parameters( name = "book No {index}:" )
-    public static List<Book> SetData(){
+    public static List<Book> setData(){
 
         List<Book> data = new ArrayList();
 
-        Book b = new Book("");
-        b.setId(15);
-        b.setAuthor("А.С.Пушкин");
+        Book b = new Book("Война и мир");
         b.setPrice(new BigDecimal(78.67));
+        b.getAuthors().add( new Author("Лев","Толстой"));
+        data.add(b);
 
+        b = new Book("Тёмная сторона Солнца");
+        //b.setISBN("6857-586-32-456-0");
+        b.setPublishingName("Visotsky Consulting");
+        data.add(b);
+
+        b = new Book("Малый бизнес. Большая игра");
+        b.getAuthors().add( new Author("Александр","Высоцкий" ));
+        b.setPublishingName("Visotsky Consulting");
+        b.setISBN("978-966-2022-70-4");
+        b.setPrice(new BigDecimal(47.36));
+        data.add(b);
+
+        b = new Book("Россия: между прошлым и будущим");
+        b.getAuthors().add( new Author("Вильонар", "Васильевич") );
+        b.getAuthors().add( new Author("Михаил","Васильевич") );
+        b.setPublishingName("Алетейя");
+        b.setISBN("978-5-907115-13-2");
+        b.setPrice(new BigDecimal(33.00));
         data.add(b);
 
         return data;

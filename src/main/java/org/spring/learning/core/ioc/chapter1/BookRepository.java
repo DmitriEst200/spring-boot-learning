@@ -1,37 +1,52 @@
 package org.spring.learning.core.ioc.chapter1;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BookRepository implements DAO<Book> {
+public class BookRepository /*implements DAO<Book, Integer>*/ {
+
+    //@PersistenceContext
+    private EntityManager em;
+
+
 
     private List<Book> books;
 
-    public void add(Book b){
+    /*public Book save(Book b){
 
         //instead of nested null checking
-        Optional.ofNullable(b).ifPresent(
-             val -> { if(getBookById(val.getId()).isEmpty())
-                        books.add(val); });
-    }
+        Optional.ofNullable(b).ifPresentOrElse(
+             val -> {
+                 if(getItemById(val.getId()).isEmpty()){
+                        //books.add(val);
+                     em.persist(val);
+                     em.close();
+                 }
+                 } ,()->{System.out.println("failed");
+             });
+    }*/
 
     public List<Book> getAll(){
-        return books;
+        Query q = em.createNamedQuery("SELECT b FROM Book b");
+        //books = q.getResultList();
+        return q.getResultList();
     }
 
     public void delete(Book b){
-        books.remove(b);
+        Optional.ofNullable(b).ifPresent( val -> {em.remove(b);});
+
+        //books.remove(b);
     }
 
-    public Optional<Book> getBookById(int id){
-        return Optional.ofNullable(
-                books.stream().filter( b -> b.getId() == id)
-                        .findFirst().
-                         orElse(null));
+    public Optional<Book> getItemById(Integer id){
+        return Optional.ofNullable(em.find(Book.class, id));
     }
 
     public BookRepository(){
-        books = new ArrayList();
+        //books = new ArrayList();
     }
 }
