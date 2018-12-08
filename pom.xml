@@ -22,6 +22,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>11</java.version>
+		<querydsl.version>4.1.4</querydsl.version>
+		<javassist.version>3.23.1-GA</javassist.version>
+		<modelmapper.version>2.3.0</modelmapper.version>
+		<apt.maven.plugin.version>1.1.3</apt.maven.plugin.version>
 	</properties>
 
 	<dependencies>
@@ -33,7 +37,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -64,7 +67,7 @@
 		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
-			<version>3.23.1-GA</version>
+			<version>${javassist.version}</version>
 		</dependency>
 
 		<!-- For conversion DTO ( Data Transfer Objects )
@@ -74,7 +77,31 @@
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
-			<version>2.3.0</version>
+			<version>${modelmapper.version}</version>
+		</dependency>
+
+		<!-- This is Query dsl libraries most simple way to build dynamical
+		 	 queries to any database of any server -->
+
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+			<version>${querydsl.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+			<version>${querydsl.version}</version>
+		</dependency>
+
+
+		<!-- jUnit for not only simple unit tests, but parameterized
+			 unit tests -->
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -87,6 +114,28 @@
 					<wait>3000</wait>
 					<maxAttempts>100</maxAttempts>
 				</configuration>
+			</plugin>
+
+			<!-- Query classes for query dsl should generate
+				 when running the apt:process goal or compile lifecycle.
+				 Therefore we should define this plugin necessarily. -->
+
+			<plugin>
+				<groupId>com.mysema.maven</groupId>
+				<artifactId>apt-maven-plugin</artifactId>
+				<version>${apt.maven.plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/generated-sources</outputDirectory>
+							<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

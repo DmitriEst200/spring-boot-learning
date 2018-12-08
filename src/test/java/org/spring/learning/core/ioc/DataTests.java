@@ -2,18 +2,16 @@ package org.spring.learning.core.ioc;
 
 import org.junit.Assert;
 import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.modelmapper.ModelMapper;
 import org.spring.learning.core.ioc.chapter1.Author;
 import org.spring.learning.core.ioc.chapter1.Book;
 import org.spring.learning.core.ioc.chapter1.BookDTO;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
-import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -22,54 +20,67 @@ import java.sql.SQLException;
 import java.sql.DriverManager;
 import java.util.*;
 
-@RunWith(Parameterized.class)
+
 public class DataTests {
 
     private ModelMapper modelMapper = new ModelMapper();
     private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    private Book testBook;
+
 
     @Ignore
     @Test
-    public void CheckMySqlConnection(){
+    public void checkMySqlConnection(){
 
-        try{
+        //for testing the method: will either be thrown specific exception or not
 
-            Connection conn = DriverManager.
-                    getConnection("jdbc:mysql://localhost:3306/testdatabase?" +
-                            "user=root&password=jack206*-*");
+        SQLException SQLerror = Assertions.assertThrows(
+                SQLException.class,
+                () -> { Connection conn = DriverManager.
+                        getConnection("jdbc:mysql://localhost:3306/testdatabase?" +
+                        "user=root&password=jack206*-*");
 
-        }catch(SQLException e){
+                },"No sql error found. Access approved!!!");
 
-            System.out.println("SQLException: " + e.getMessage());
-            System.out.println("SQLState: " + e.getSQLState());
-            System.out.println("VendorError: " + e.getErrorCode());
-        }
-
+        System.out.println("SQLException: " + SQLerror.getMessage());
+        System.out.println("SQLState: " + SQLerror.getSQLState());
+        System.out.println("VendorError: " + SQLerror.getErrorCode());
     }
 
     @Ignore
     @Test
-    public void PrimitiveOperations(){
+    public void primitiveOperations(){
 
-        BigDecimal num = new BigDecimal("29.3575217438265872567217751245218764837563756783264521761254187847624");
+        BigDecimal num = new BigDecimal("29.35752174382658725672177512452187" +
+                "64837563756783264521761254187847624");
         BigDecimal num2 = num;
         System.out.println("accurate value: "+num);
-        System.out.println("approximate value:"+num.toString());
-        System.out.println("plain value:"+num.toPlainString());
-        num2.multiply(new BigDecimal("2.0"));
-        System.out.println(num);
-        System.out.println("rounded num1: "+num.setScale(2, RoundingMode.HALF_DOWN));
+        System.out.println("accurate string value: "+num.toString());
+        System.out.println("plain value: "+num.toPlainString());
+        num = num2.multiply(new BigDecimal("2.856826572346745"));
+
+        Assert.assertFalse(
+                "Float value must be without scientific notation",
+                 num.toString().toLowerCase().contains("e")
+        );
+
+        System.out.println("number num1 after multiplying = "+num);
+        System.out.println("rounded num1: "+
+                num.setScale(2, RoundingMode.HALF_DOWN));
+
         num = new BigDecimal("65.54332652356781256875178597927352638");
         System.out.println("new num1 = "+num);
-        System.out.println("rounded num1: "+num.setScale(2, RoundingMode.HALF_DOWN));
+
+        System.out.println("rounded num1: "+
+                num.setScale(2, RoundingMode.HALF_DOWN));
         num2 = new BigDecimal("1.555");
-        System.out.println("rounded num2: "+num2.setScale(2, RoundingMode.HALF_DOWN));
+        System.out.println("rounded num2: "+
+                num2.setScale(2, RoundingMode.HALF_DOWN));
 
     }
 
-    @Test
-    public void CheckCopyFromEntityToDTO(){
+    @ParameterizedTest(name = "book No {index}:")
+    @MethodSource("setData")
+    public void checkCopyFromEntityToDTO(Book testBook){
 
         Set<ConstraintViolation<Book>> violations = factory.getValidator().validate(testBook);
         Assert.assertTrue("Error messages is occured!!!",violations.isEmpty());
@@ -77,13 +88,16 @@ public class DataTests {
         BookDTO bookDTO = testBook.toBookDTO();
         Assert.assertEquals(bookDTO.getId(), testBook.getId());
         Assert.assertEquals(bookDTO.getName(), testBook.getName());
+        Assert.assertEquals(bookDTO.getISBN(), testBook.getISBN());
+        Assert.assertEquals(bookDTO.getPublishingName(), testBook.getPublishingName());
 
         if(testBook.getPrice() != null)
-            Assert.assertEquals(bookDTO.getPrice(), testBook.getPrice().floatValue(), 0.002);
+            Assert.assertEquals(
+                    bookDTO.getPrice(),
+                    testBook.getPrice().floatValue(), 0.002);
     }
 
-    @Parameters( name = "book No {index}:" )
-    public static List<Book> setData(){
+    public static final List<Book> setData(){
 
         List<Book> data = new ArrayList();
 
@@ -112,10 +126,21 @@ public class DataTests {
         b.setPrice(new BigDecimal(33.00));
         data.add(b);
 
-        return data;
-    }
+        b = new Book("Тайны Библии. Научные открытия, находки, факты");
+        b.getAuthors().add( new Author("Яна","Грецова") );
+        b.getAuthors().add( new Author("Ева", "Павлычева") );
+        b.setPublishingName("Никея");
+      //  b.setISBN("978-5-91761-927-9");
+        b.setPrice(new BigDecimal(9.92));
+        data.add(b);
 
-    public DataTests(Book book){
-        testBook = book;
+        b = new Book("Санузел");
+        b.getAuthors().add( new Author("Александр", "Кира"));
+        b.setPublishingName("Студия Артемия Лебедева");
+        b.setISBN("978-5-98062-102-5");
+        b.setPrice(new BigDecimal(22.45));
+        data.add(b);
+
+        return data;
     }
 }

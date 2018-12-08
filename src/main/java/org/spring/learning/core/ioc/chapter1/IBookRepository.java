@@ -1,5 +1,6 @@
 package org.spring.learning.core.ioc.chapter1;
 
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +12,6 @@ import java.util.Set;
  */
 
 @Repository
-public interface IBookRepository extends CrudRepository<Book, Integer>{
+public interface IBookRepository extends CrudRepository<Book, Integer>, QuerydslPredicateExecutor<Book> {
 
 }

@@ -9,7 +9,7 @@ public class BookDTO implements Serializable{
 
     private int id;
     private String name;
-    //private String author;
+    private String isbn;
     private BigDecimal price;
     private String publishingName;
 
@@ -29,13 +29,13 @@ public class BookDTO implements Serializable{
         return name;
     }
 
-    /*public void setAuthor(String author){
-        this.author = author;
+    public void setISBN(String isbn){
+        this.isbn = isbn;
     }
 
-    //public String getAuthor(){
-        return author;
-    }*/
+    public String getISBN(){
+        return isbn;
+    }
 
     public void setPublishingName(String publishingName){
         this.publishingName = publishingName;
@@ -68,9 +68,9 @@ public class BookDTO implements Serializable{
     }
 
     public String toString(){
-        return String.format("[%d. %s, publishing: %s, price = %s]", id, name,
-                publishingName != null ? publishingName : "-"
-                /*author != null ? author : "-"*/,
+        return String.format("[%d. %s, publishing: %s, isbn: %s, price = %s]", id, name,
+                publishingName != null ? publishingName : "-",
+                isbn != null ? isbn : "-",
                 price != null ? getPrice()+"€" : "-");
     }
 }

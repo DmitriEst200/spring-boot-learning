@@ -22,7 +22,7 @@ public class Book {
     @Column(name = "book_id", updatable = false, nullable = false)
     private int id;
 
-    @Column(name = "book_name", unique = true, nullable = false, length = 4805)
+    @Column(name = "book_name", nullable = false, length = 4805)
     private String name;
 
     @Pattern(regexp = "(?:ISBN(?:-1[03])?:? )?(?=[0-9X]{10}$|" +
@@ -31,7 +31,7 @@ public class Book {
             "(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)(?:97[89][- ]?)?" +
             "[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$",
             message = "Invalid ISBN code")
-    @Column(name = "ISBN")
+    @Column(name = "ISBN", unique = true)
     private String isbn;
 
     @Column(name = "publishing_house")
@@ -39,7 +39,7 @@ public class Book {
 
     //price must be greater than zero and rounded to two marks after a comma
 
-    @DecimalMin(value = "0.0", inclusive = true, message = "price must be positive number")
+    @DecimalMin(value = "0.0", message = "price must be positive number")
     @Column(name = "price", scale = 2)
     private BigDecimal price;
 

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.annotation.Bean;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -42,4 +43,5 @@ public class MySQLDbAdditionalConfiguration {
 
         lcem.setJpaPropertyMap(props);
     }
+
 }
