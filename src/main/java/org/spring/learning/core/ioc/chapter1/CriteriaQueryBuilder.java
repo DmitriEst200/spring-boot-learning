@@ -12,7 +12,7 @@ import org.springframework.cglib.core.internal.Function;
 import java.util.Collection;
 
 
-public class CriteriaQueryBuilder{
+public class CriteriaQueryBuilder implements QueryBuilder{
 
     private BooleanExpression criteriaPredicate;
 

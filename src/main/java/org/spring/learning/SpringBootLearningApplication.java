@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import java.util.Arrays;
 
 @SpringBootApplication
-//@EntityScan(basePackages = {"org.spring.learning.core.ioc.chapter1"})
 public class SpringBootLearningApplication {
 
 	public static void main(String[] args) {

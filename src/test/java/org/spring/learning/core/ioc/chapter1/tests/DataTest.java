@@ -1,4 +1,4 @@
-package org.spring.learning.core.ioc;
+package org.spring.learning.core.ioc.chapter1.tests;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -21,7 +21,7 @@ import java.sql.DriverManager;
 import java.util.*;
 
 
-public class DataTests {
+public class DataTest {
 
     private ModelMapper modelMapper = new ModelMapper();
     private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -82,8 +82,10 @@ public class DataTests {
     @MethodSource("setData")
     public void checkCopyFromEntityToDTO(Book testBook){
 
-        Set<ConstraintViolation<Book>> violations = factory.getValidator().validate(testBook);
-        Assert.assertTrue("Error messages is occured!!!",violations.isEmpty());
+        Set<ConstraintViolation<Book>> violations =
+                factory.getValidator().validate(testBook);
+        Assert.assertTrue("Error messages is occured!!!",
+                violations.isEmpty());
 
         BookDTO bookDTO = testBook.toBookDTO();
         Assert.assertEquals(bookDTO.getId(), testBook.getId());

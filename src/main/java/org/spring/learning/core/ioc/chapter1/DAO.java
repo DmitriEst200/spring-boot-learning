@@ -1,16 +1,15 @@
 package org.spring.learning.core.ioc.chapter1;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-
+import org.springframework.data.repository.NoRepositoryBean;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
 
-//@Repository
-public interface DAO<T, ID extends Serializable>/* extends CrudRepository<T, ID>*/{
-   // void add(T item);
-   // void delete(T item);
-   // List<T> getAll();
-   // Optional<T> getItemById(ID id);
+@NoRepositoryBean
+public interface DAO<T, ID extends Serializable> extends CrudRepository<T, ID>{
+
+    Iterable<T> findAll(Sort sort);
+    Page<T> findAll(Pageable pageable);
 }
